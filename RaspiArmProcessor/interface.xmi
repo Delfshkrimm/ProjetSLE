@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<APES:Interface
+  xmlns:xmi="http://www.omg.org/XMI"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:APES="http://www.ocm.org/APES"
+  xsi:schemaLocation="http://www.ocm.org/APES APESInterface.ecore"
+  author="xavier.guerin@imag.fr"
+  unique="true"
+  wrapper="false">
+
+  <id name="RaspiArmProcessor" version="1.0"/>
+
+  <restrict>
+    <id name="RaspiPlatform" version="1.0"/>
+  </restrict>
+
+  <provide>
+    <context name="Cache">
+      <type name="cpu_cache_t"/>
+
+      <definition name="CPU_ICACHE_SIZE_LOG2"/>
+      <definition name="CPU_DCACHE_SIZE_LOG2"/>
+      <definition name="CPU_CACHE_ALL"/>
+
+      <method name="cpu_cache_sync" result=""/>
+
+      <method name="cpu_cache_invalidate" result="">
+        <argument name="cache_type" type="cpu_cache_t" direction="In"/>
+        <argument name="address" type="access" direction="In"/>
+        <argument name="words" type="int32_t" direction="In"/>
+      </method>
+    </context>
+
+    <context name="Endianness">
+      <type name="cpu_endianness_t"/>
+      <definition name="CPU_ENDIANNESS"/>
+
+      <method name="cpu_endian_is_big" result="">
+        <argument name="width" type="int32_t" direction="In"/>
+        <argument name="value" type="access" direction="InOut"/>
+      </method>
+
+      <method name="cpu_endian_is_little" result="">
+        <argument name="width" type="int32_t" direction="In"/>
+        <argument name="value" type="access" direction="InOut"/>
+      </method>
+
+      <method name="cpu_endian_concat" result="">
+        <argument name="width" type="int32_t" direction="In"/>
+        <argument name="result" type="access" direction="Out"/>
+        <argument name="low" type="access" direction="In"/>
+        <argument name="high" type="access" direction="In"/>
+      </method>
+
+      <method name="cpu_endian_split" result="">
+        <argument name="width" type="int32_t" direction="In"/>
+        <argument name="value" type="access" direction="In"/>
+        <argument name="low" type="access" direction="Out"/>
+        <argument name="high" type="access" direction="Out"/>
+      </method>
+    </context>
+
+    <context name="Context">
+      <type name="cpu_context_t"/>
+      <definition name="CPU_CONTEXT_SIZE"/>
+
+      <method name="cpu_context_init" result="">
+        <argument name="context" type="cpu_context_t" direction="Out"/>
+        <argument name="stack" type="access" direction="In"/>
+        <argument name="size" type="int32_t" direction="In"/>
+        <argument name="entry" type="access function" direction="In"/>
+        <argument name="arguments" type="access generic" direction="In"/>
+      </method>
+
+      <method name="cpu_context_load" result="">
+        <argument name="context" type="cpu_context_t" direction="In"/>
+      </method>
+
+      <method name="cpu_context_save" result="">
+        <argument name="context" type="cpu_context_t" direction="Out"/>
+      </method>
+
+      <method name="cpu_context_switch" result="">
+        <argument name="from" type="cpu_context_t" direction="In"/>
+        <argument name="to" type="cpu_context_t" direction="Out"/>
+      </method>
+    </context>
+
+    <context name="IO">
+      <method name="cpu_read" result="">
+        <argument name="size" type="int32_t" direction="In"/>
+        <argument name="address" type="access" direction="In"/>
+        <argument name="result" type="access" direction="Out"/>
+      </method>
+
+      <method name="cpu_uncached_read" result="">
+        <argument name="size" type="int32_t" direction="In"/>
+        <argument name="address" type="access" direction="In"/>
+        <argument name="result" type="access" direction="Out"/>
+      </method>
+
+      <method name="cpu_vector_read" result="">
+        <argument name="mode" type="vector_mode_t" direction="In"/>
+        <argument name="from" type="access" direction="In"/>
+        <argument name="to" type="access" direction="In"/>
+        <argument name="size" type="int32_t" direction="In"/>
+      </method>
+
+      <method name="cpu_write" result="">
+        <argument name="size" type="int32_t" direction="In"/>
+        <argument name="address" type="access" direction="In"/>
+        <argument name="value" type="access" direction="In"/>
+      </method>
+
+      <method name="cpu_uncached_write" result="">
+        <argument name="size" type="int32_t" direction="In"/>
+        <argument name="address" type="access" direction="In"/>
+        <argument name="value" type="access" direction="In"/>
+      </method>
+
+      <method name="cpu_vector_write" result="">
+        <argument name="mode" type="vector_mode_t" direction="In"/>
+        <argument name="to" type="access" direction="In"/>
+        <argument name="from" type="access" direction="In"/>
+        <argument name="size" type="int32_t" direction="In"/>
+      </method>
+    </context>
+
+    <context name="Interrupt">
+      <type name="interrupt_id_t"/>
+      <type name="interrupt_status_t"/>
+      <type name="interrupt_handler_t"/>
+      <type name="exception_id_t"/>
+      <type name="exception_handler_t"/>
+
+      <definition name="CPU_N_IT"/>
+
+      <method name="cpu_trap_attach_esr" result="">
+        <argument name="id" type="exception_id_t" direction="In"/>
+        <argument name="handler" type="exception_handler_t" direction="In"/>
+      </method>
+
+      <method name="cpu_trap_attach_isr" result="">
+        <argument name="id" type="interrupt_id_t" direction="In"/>
+        <argument name="handler" type="interrupt_handler_t" direction="In"/>
+      </method>
+
+      <method name="cpu_trap_mask_and_backup" result="interrupt_status_t"/>
+
+      <method name="cpu_trap_restore" result="">
+        <argument name="status" type="interrupt_status_t" direction="In"/>
+      </method>
+
+      <method name="cpu_trap_enable" result="">
+        <argument name="id" type="interrupt_id_t" direction="In"/>
+      </method>
+
+      <method name="cpu_trap_disable" result="">
+        <argument name="id" type="interrupt_id_t" direction="In"/>
+      </method>
+    </context>
+
+    <context name="MP">
+      <method name="cpu_mp_count" result="int32_t"/>
+
+      <method name="cpu_mp_id" result="int32_t"/>
+
+      <method name="cpu_mp_wait" result="">
+        <argument name="sync" type="int32_t" direction="InOut"/>
+      </method>
+
+      <method name="cpu_mp_proceed" result="">
+        <argument name="sync" type="int32_t" direction="InOut"/>
+      </method>
+    </context>
+
+    <context name="Synchronization">
+      <method name="cpu_test_and_set" result="int32_t">
+        <argument name="lock" type="int32_t" direction="InOut"/>
+      </method>
+
+      <method name="cpu_compare_and_swap" result="int32_t">
+        <argument name="lock" type="int32_t" direction="InOut"/>
+        <argument name="old" type="int32_t" direction="In"/>
+        <argument name="new" type="int32_t" direction="In"/>
+      </method>
+    </context>
+
+    <context name="Timer">
+      <type name="bigtime_t"/>
+
+      <method name="cpu_timer_set" result="">
+        <argument name="id" type="int32_t" direction="In"/>
+        <argument name="quantum" type="bigtime_t" direction="In"/>
+      </method>
+
+      <method name="cpu_timer_get" result="">
+        <argument name="id" type="int32_t" direction="In"/>
+        <argument name="quantum" type="bigtime_t" direction="Out"/>
+      </method>
+
+      <method name="cpu_timer_cancel" result="">
+        <argument name="id" type="int32_t" direction="In"/>
+      </method>
+    </context>
+
+    <context name="Power">
+      <method name="cpu_power_wake_on_interrupt" result=""/>
+    </context>
+
+  </provide>
+
+  <require>
+    <definition name="PLATFORM_ENDIANNESS"/>
+
+    <method name="system_kickstart" result=""/>
+
+    <method name="timer_callback" result=""/>
+
+    <method name="ipi_callback" result="">
+      <argument name="command" type="int32_t" direction="In"/>
+      <argument name="data" type="access" direction="In"/>
+    </method>
+  </require>
+
+</APES:Interface>
