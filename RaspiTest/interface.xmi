@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<APES:Interface
+   xmlns:xmi="http://www.omg.org/XMI"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xmlns:APES="http://www.ocm.org/APES"
+   xsi:schemaLocation="http://www.ocm.org/APES APESInterface.ecore"
+   author="charles.eynard@gmail.com"
+   unique="true"
+   wrapper="false">
+
+  <id name="TestRaspi" version="1.0"/>
+  <restrict>
+      <id name="RaspiArmProcessor" version="1.0"/>
+      <id name="DnaCore" version="1.0"/>
+      <id name="PosixThreadsLibrary" version="1.0"/>
+  </restrict> 
+
+  <provide> 
+    <context name="TestRaspi"> 
+      <method name="main" result="int32_t">
+          <argument name="argc" type="int32_t" direction="In"/>
+          <argument name="argv" type="array of string" direction="In"/>
+      </method>
+    </context>
+  </provide>
+  
+  <require>
+    <method name="printf" result="int32_t">
+      <argument name="format" type="string" direction="In"/>
+      <argument name="..." type="array of void" direction="In"/>
+    </method>
+  </require>
+
+</APES:Interface>

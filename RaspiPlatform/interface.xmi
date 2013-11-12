@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<APES:Interface
+  xmlns:xmi="http://www.omg.org/XMI"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:APES="http://www.ocm.org/APES"
+  xsi:schemaLocation="http://www.ocm.org/APES APESInterface.ecore"
+  author="xavier.guerin@imag.fr"
+  unique="true"
+  wrapper="false">
+
+  <id name="RaspiPlatform" version="1.0"/>
+
+  <provide>
+    <context name="Endianness">
+      <type name="platform_endianness_t"/>
+      <definition name="PLATFORM_ENDIANNESS"/>
+    </context>
+
+    <context name="Debug">
+      <method name="platform_debug_puts" result="">
+        <argument name="string" type="string" direction="In"/>
+      </method>
+    </context>
+  </provide>
+
+  <require>
+   <method name="cpu_write" result="">
+      <argument name="size" type="int32_t" direction="In"/>
+      <argument name="address" type="access" direction="In"/>
+      <argument name="value" type="access" direction="In"/>
+    </method>
+  </require>
+
+</APES:Interface>
